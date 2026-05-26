@@ -1,0 +1,126 @@
+  <div class="page-header">
+    <div>
+      <h2>Dashboard</h2>
+      <p>Inventory overview at a glance</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-page">
+    <div class="spinner"></div>
+  </div>
+
+  <ng-container *ngIf="!loading && stats">
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card accent">
+        <div class="stat-label">Total Products</div>
+        <div class="stat-value">{{ stats.summary.totalProducts }}</div>
+        <div class="stat-sub">Active in inventory</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Categories</div>
+        <div class="stat-value">{{ stats.summary.totalCategories }}</div>
+        <div class="stat-sub">Product groups</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-label">Low Stock</div>
+        <div class="stat-value">{{ stats.summary.lowStockProducts }}</div>
+        <div class="stat-sub">Need restocking</div>
+      </div>
+      <div class="stat-card danger">
+        <div class="stat-label">Out of Stock</div>
+        <div class="stat-value">{{ stats.summary.outOfStockProducts }}</div>
+        <div class="stat-sub">Unavailable items</div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-label">Inventory Value</div>
+        <div class="stat-value" style="font-size:1.3rem">{{ formatCurrency(stats.summary.totalInventoryValue) }}</div>
+        <div class="stat-sub">Total stock value</div>
+      </div>
+    </div>
+
+    <!-- Bottom Grid -->
+    <div class="bottom-grid">
+      <!-- Category Breakdown -->
+      <div class="card">
+        <h3 class="card-title">Stock by Category</h3>
+        <div class="category-list">
+          <div *ngFor="let cat of stats.stockByCategory" class="category-row">
+            <div class="cat-header">
+              <div class="cat-dot" [style.background]="cat.categoryColor"></div>
+              <span class="cat-name">{{ cat.categoryName }}</span>
+              <span class="cat-products">{{ cat.totalProducts }} items</span>
+              <span class="cat-value">{{ formatCurrency(cat.totalValue) }}</span>
+            </div>
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                [style.width.%]="getBarWidth(cat.totalValue)"
+                [style.background]="cat.categoryColor"
+              ></div>
+            </div>
+          </div>
+          <div *ngIf="stats.stockByCategory.length === 0" class="empty-state">
+            <div class="empty-icon">◫</div>
+            <h4>No categories yet</h4>
+          </div>
+        </div>
+      </div>
+
+      <!-- Low Stock Alerts -->
+      <div class="card">
+        <h3 class="card-title">
+          Stock Alerts
+          <span *ngIf="alerts.length > 0" class="badge badge-warning">{{ alerts.length }}</span>
+        </h3>
+        <div class="alerts-list">
+          <div *ngFor="let product of alerts" class="alert-row">
+            <div class="alert-info">
+              <span class="alert-name">{{ product.name }}</span>
+              <span class="alert-sku">{{ product.sku }}</span>
+            </div>
+            <div class="alert-stock">
+              <span [class]="'badge badge-' + getStockClass(product)">
+                {{ product.stock }} / {{ product.minStock }}
+              </span>
+            </div>
+          </div>
+          <div *ngIf="alerts.length === 0" class="empty-state">
+            <div class="empty-icon">✓</div>
+            <h4>All stocked up!</h4>
+            <p>No alerts at this time</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Products -->
+      <div class="card recent-card">
+        <h3 class="card-title">Recent Products</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>SKU</th>
+                <th>Stock</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of stats.recentProducts">
+                <td>
+                  <div class="product-name">{{ p.name }}</div>
+                  <div class="product-cat">{{ p.category?.name }}</div>
+                </td>
+                <td><code>{{ p.sku }}</code></td>
+                <td>
+                  <span [class]="'badge badge-' + getStockClass(p)">{{ p.stock }} {{ p.unit }}</span>
+                </td>
+                <td>{{ formatCurrency(p.price) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </ng-container>

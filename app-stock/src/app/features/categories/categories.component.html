@@ -1,0 +1,82 @@
+  <div class="page-header">
+    <div>
+      <h2>Categories</h2>
+      <p>{{ categories.length }} categories</p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">+ New Category</button>
+  </div>
+
+  <div *ngIf="loading" class="loading-page"><div class="spinner"></div></div>
+
+  <div *ngIf="!loading" class="categories-grid">
+    <div *ngFor="let cat of categories" class="cat-card card">
+      <div class="cat-color-bar" [style.background]="cat.color"></div>
+      <div class="cat-body">
+        <div class="cat-name">{{ cat.name }}</div>
+        <div class="cat-desc">{{ cat.description || 'No description' }}</div>
+      </div>
+      <div class="cat-actions">
+        <button class="btn btn-ghost btn-sm" (click)="openEdit(cat)">Edit</button>
+        <button class="btn btn-danger btn-sm" (click)="confirmDelete(cat)">Delete</button>
+      </div>
+    </div>
+
+    <div *ngIf="categories.length === 0" class="empty-state card" style="grid-column: 1/-1">
+      <div class="empty-icon">⊞</div>
+      <h4>No categories yet</h4>
+      <p>Create your first product category</p>
+    </div>
+  </div>
+
+<!-- Category Modal -->
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="modal" *ngIf="form">
+    <h3>{{ editingCategory ? 'Edit Category' : 'New Category' }}</h3>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label>Name *</label>
+        <input formControlName="name" placeholder="Category name" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input formControlName="description" placeholder="Optional description" />
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <div class="color-picker">
+          <div
+            *ngFor="let color of colorPresets"
+            class="color-dot"
+            [style.background]="color"
+            [class.selected]="form.get('color')?.value === color"
+            (click)="form.get('color')?.setValue(color)"
+          ></div>
+          <input type="color" formControlName="color" class="color-input" />
+        </div>
+      </div>
+      <div *ngIf="error" class="error-msg">{{ error }}</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" (click)="showModal = false">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="saving || form.invalid">
+          <span *ngIf="!saving">{{ editingCategory ? 'Save Changes' : 'Create' }}</span>
+          <span *ngIf="saving" class="spinner"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Delete Confirm -->
+<div class="modal-overlay" *ngIf="showDeleteConfirm">
+  <div class="modal">
+    <h3>Delete Category</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 0.5rem">
+      Delete <strong style="color: var(--text-primary)">{{ deleteTarget?.name }}</strong>?
+    </p>
+    <p style="color: var(--text-muted); font-size: 0.85rem">Categories with products cannot be deleted.</p>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="showDeleteConfirm = false">Cancel</button>
+      <button class="btn btn-danger" (click)="doDelete()">Delete</button>
+    </div>
+  </div>
+</div>

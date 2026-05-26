@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  api:
+    build: ./app-stock-api
+    container_name: app-stock-api
+    ports:
+      - '3000:3000'
+    env_file:
+      - ./app-stock-api/.env
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  frontend:
+    build: ./app-stock
+    container_name: app-stock
+    ports:
+      - '80:80'
+    depends_on:
+      - api
+    networks:
+      - app-network
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge

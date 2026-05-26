@@ -1,0 +1,119 @@
+  <div class="page-header">
+    <div>
+      <h2>Products</h2>
+      <p>{{ pagination.total }} total products</p>
+    </div>
+    <button class="btn btn-primary" (click)="openCreate()">+ New Product</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters card">
+    <input
+      type="text"
+      [(ngModel)]="search"
+      (ngModelChange)="onSearch()"
+      placeholder="Search by name or SKU..."
+      class="filter-input"
+    />
+    <select [(ngModel)]="selectedCategory" (ngModelChange)="loadProducts(1)" class="filter-select">
+      <option value="">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat._id">{{ cat.name }}</option>
+    </select>
+    <label class="toggle-label">
+      <input type="checkbox" [(ngModel)]="showLowStock" (ngModelChange)="loadProducts(1)" />
+      Low stock only
+    </label>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap" *ngIf="!loading && products.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of products">
+          <td>
+            <div class="product-name">{{ p.name }}</div>
+            <div class="product-desc">{{ p.description | slice:0:50 }}{{ p.description && p.description.length > 50 ? '…' : '' }}</div>
+          </td>
+          <td><code>{{ p.sku }}</code></td>
+          <td>
+            <span class="cat-chip" [style.background]="p.category?.color + '22'" [style.color]="p.category?.color">
+              {{ p.category?.name }}
+            </span>
+          </td>
+          <td class="mono">\${{ p.price.toFixed(2) }}</td>
+          <td>
+            <span [class]="'badge badge-' + getStockClass(p)">
+              {{ p.stock }} {{ p.unit }}
+            </span>
+          </td>
+          <td>
+            <span *ngIf="p.stock === 0" class="badge badge-danger">Out of stock</span>
+            <span *ngIf="p.isLowStock && p.stock > 0" class="badge badge-warning">Low stock</span>
+            <span *ngIf="!p.isLowStock && p.stock > 0" class="badge badge-success">OK</span>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button class="btn btn-ghost btn-sm" (click)="openEdit(p)">Edit</button>
+              <button class="btn btn-danger btn-sm" (click)="confirmDelete(p)">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-page"><div class="spinner"></div></div>
+
+  <!-- Empty -->
+  <div *ngIf="!loading && products.length === 0" class="empty-state card">
+    <div class="empty-icon">◫</div>
+    <h4>No products found</h4>
+    <p>Try adjusting your filters or create a new product</p>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination" *ngIf="pagination.pages > 1">
+    <button
+      *ngFor="let p of getPages()"
+      class="btn"
+      [class.btn-primary]="p === pagination.page"
+      [class.btn-ghost]="p !== pagination.page"
+      (click)="loadProducts(p)"
+    >{{ p }}</button>
+  </div>
+
+<!-- Product Form Modal -->
+<app-product-form
+  *ngIf="showModal"
+  [product]="editingProduct"
+  [categories]="categories"
+  (saved)="onSaved()"
+  (cancelled)="showModal = false"
+></app-product-form>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" *ngIf="showDeleteConfirm">
+  <div class="modal">
+    <h3>Delete Product</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 0.5rem">
+      Are you sure you want to delete <strong style="color: var(--text-primary)">{{ deleteTarget?.name }}</strong>?
+    </p>
+    <p style="color: var(--text-muted); font-size: 0.85rem">This action cannot be undone.</p>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" (click)="showDeleteConfirm = false">Cancel</button>
+      <button class="btn btn-danger" (click)="doDelete()">Delete</button>
+    </div>
+  </div>
+</div>

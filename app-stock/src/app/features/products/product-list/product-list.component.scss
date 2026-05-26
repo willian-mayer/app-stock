@@ -1,0 +1,76 @@
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+
+  .filter-input {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.6rem 0.9rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.875rem;
+    &:focus { outline: none; border-color: var(--accent); }
+    &::placeholder { color: var(--text-muted); opacity: 0.5; }
+  }
+
+  .filter-select {
+    padding: 0.6rem 0.9rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.875rem;
+    &:focus { outline: none; border-color: var(--accent); }
+    option { background: var(--bg-card); }
+  }
+
+  .toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    input[type="checkbox"] { accent-color: var(--accent); }
+  }
+}
+
+.product-name { font-weight: 500; color: var(--text-primary); }
+.product-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+code {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  background: var(--bg-hover);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  color: var(--accent);
+}
+
+.cat-chip {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.mono { font-family: 'Space Mono', monospace; font-size: 0.85rem; }
+
+.row-actions { display: flex; gap: 0.4rem; }
+
+.btn-sm { padding: 0.35rem 0.65rem; font-size: 0.78rem; }
+
+.pagination {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+  justify-content: center;
+}
