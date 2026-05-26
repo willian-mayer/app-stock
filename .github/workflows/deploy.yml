@@ -23,7 +23,7 @@ jobs:
           script: |
             # Si es la primera vez, clonar el repo
             if [ ! -d "/home/ubuntu/app-stock-repo" ]; then
-              git clone https://github.com/TU_USUARIO/TU_REPO.git /home/ubuntu/app-stock-repo
+              git clone https://github.com/willian-mayer/app-stock.git /home/ubuntu/app-stock-repo
             fi
 
             # Ir al repo y actualizar
