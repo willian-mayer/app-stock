@@ -178,3 +178,5 @@ docker-compose logs -f
 - **Lazy loading** on all Angular feature modules for performance
 - **JWT in localStorage** with HTTP interceptor for automatic auth headers
 - **Docker multi-stage builds** to keep image sizes small
+
+
